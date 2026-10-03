@@ -1,10 +1,13 @@
 export default {
   async fetch(request, env) {
-    const country = request.cf?.country || "default";
-    const filePath = country === "CN"
-      ? "/cn/index.html"
-      : "/default/index.html";
+    const url = new URL(request.url);
 
-    return env.ASSETS.fetch(filePath);
+    if (url.pathname === "/" || url.pathname === "") {
+      const country = request.cf?.country;
+      url.pathname = country === "CN" ? "/cn/index.html" : "/default/index.html";
+      return env.ASSETS.fetch(new Request(url.toString(), request));
+    }
+
+    return env.ASSETS.fetch(request);
   }
 };
