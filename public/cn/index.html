@@ -6,37 +6,76 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background-color: #111;
-      color: #eee;
+      margin: 0; padding: 0;
+      background-color: #111; color: #eee;
       font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: flex; justify-content: center; align-items: center;
       height: 100vh;
     }
-
-    video {
-      max-width: 90%;
+    
+    /* Shared style so both the video and the images look identical */
+    .meme-media {
+      max-width: 90%; 
       max-height: 90%;
-      border-radius: 12px;
+      border-radius: 12px; 
       outline: 2px solid #333;
       background: #000;
+    }
+
+    /* Only show the pointer cursor on the video, since clicking the image does nothing */
+    video.meme-media {
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <video autoplay loop muted playsinline id="video">
-    <source src="cnasshoe.webm" type="video/webm">
-    Your browser does not support WEBM playback.
-  </video>
+  
+  <!-- Empty container where JS will drop the video or image -->
+  <div id="meme-container"></div>
+
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const video = document.getElementById("video");
-      video.addEventListener("click", () => {
-        video.muted = !video.muted;
-      });
+      const container = document.getElementById("meme-container");
+
+      // 1. Your list of mixed files
+      const memes = [
+        "cnasshoe.webm",
+        "taiwan.webp",
+        "xithepooh.webp"
+      ];
+
+      // 2. Pick a random one
+      const selectedMeme = memes[Math.floor(Math.random() * memes.length)];
+
+      // 3. Check what type of file won the lottery
+      if (selectedMeme.endsWith(".webm")) {
+        
+        // Build the video element
+        const video = document.createElement("video");
+        video.className = "meme-media";
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.src = selectedMeme;
+
+        // Add the click-to-unmute logic only to the video
+        video.addEventListener("click", () => {
+          video.muted = !video.muted;
+        });
+
+        container.appendChild(video);
+
+      } else {
+        
+        // Build the image element for webp (or png/jpg)
+        const img = document.createElement("img");
+        img.className = "meme-media";
+        img.src = selectedMeme;
+        img.alt = "Meme";
+
+        container.appendChild(img);
+      }
     });
   </script>
 </body>
